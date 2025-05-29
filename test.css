@@ -421,6 +421,133 @@ body.dark-theme .forecast.weather-fog {
   }
 }
 
+/* --- Responsive improvements for small screens --- */
+@media (max-width: 700px) {
+  header {
+    padding: 18px 4vw 12px 4vw;
+    font-size: 1em;
+    border-radius: 0 0 18px 18px;
+    margin-bottom: 18px;
+  }
+  h1 {
+    font-size: 1.4em;
+    padding: 0 0.2em;
+  }
+  #mainContentWrapper {
+    max-width: 98vw;
+    padding: 14px 2vw 12px 2vw;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(100,150,200,0.10);
+  }
+  .forecast {
+    min-width: unset;
+    max-width: 98vw;
+    padding: 14px 2vw 12px 2vw;
+    font-size: 1em;
+    margin-bottom: 14px;
+    border-radius: 12px;
+  }
+  .forecast .icon-bg {
+    width: 60px;
+    height: 60px;
+  }
+  .forecast img {
+    width: 44px;
+    height: 44px;
+  }
+  .input-row,
+  .unit-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .input-row input,
+  .input-row select,
+  .input-row button,
+  .unit-row select {
+    width: 100%;
+    font-size: 1em;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+  #forecastBtn {
+    padding: 10px 0;
+    width: 100%;
+    font-size: 1.08em;
+  }
+  #alertBox {
+    font-size: 1em;
+    padding: 10px 2vw 8px 2vw;
+    margin: 12px 0;
+    min-width: unset;
+    max-width: 98vw;
+    border-radius: 10px;
+  }
+  .sidebar,
+  .sidebar.right-sidebar {
+    width: 100vw;
+    min-width: unset;
+    max-width: 100vw;
+    border-radius: 0;
+    padding: 14px 2vw 12px 2vw;
+    box-shadow: none;
+    gap: 16px;
+  }
+  .sidebar h3 {
+    font-size: 1em;
+    padding-bottom: 2px;
+  }
+  .sidebar > div {
+    margin-bottom: 12px;
+  }
+  .sidebar-close-btn, .sidebar-open-btn,
+  #openRightSidebarBtn, #closeRightSidebarBtn {
+    width: 32px;
+    height: 32px;
+    font-size: 1.3em;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+  }
+  #weatherNews .news-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 8px 2vw;
+  }
+  #weatherNews .news-card img {
+    width: 100%;
+    max-width: 120px;
+    height: auto;
+    margin-bottom: 4px;
+  }
+}
+
+/* Make sure sidebars stack vertically if both are open */
+@media (max-width: 700px) {
+  .sidebar {
+    top: 0;
+    left: 0;
+    height: auto;
+    min-height: unset;
+    position: fixed;
+    z-index: 99;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .sidebar.right-sidebar {
+    right: 0;
+    left: 0;
+    top: auto;
+    bottom: 0;
+    height: auto;
+    min-height: unset;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
 /* Dark Theme Styles */
 body.dark-theme {
   background: linear-gradient(135deg, #232526 0%, #414345 100%);
@@ -549,79 +676,4 @@ input:checked + .slider:before {
 }
 .sidebar:not(.right-sidebar) #recentSearches {
   padding-left: 0;
-}
-
-/* Responsive styles for mobile */
-@media (max-width: 800px) {
-  body {
-    font-size: 1em;
-    padding: 0;
-    margin: 0;
-  }
-  header {
-    text-align: center;
-    padding: 1em 0.5em;
-  }
-  .sidebar {
-    width: 100%;
-    float: none;
-    display: block;
-    margin-bottom: 1em;
-    border-radius: 0;
-    box-shadow: none;
-  }
-  .right-sidebar {
-    width: 100%;
-    float: none;
-    margin-top: 0;
-    margin-bottom: 1em;
-  }
-  #mainContentWrapper {
-    width: 100%;
-    margin: 0;
-    padding: 0 0.5em;
-  }
-  .input-row,
-  .unit-row {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.5em;
-  }
-  .input-row input,
-  .input-row select,
-  .input-row button,
-  .unit-row select {
-    width: 100%;
-    margin-bottom: 0.5em;
-    font-size: 1em;
-  }
-  .forecast {
-    margin: 1em 0;
-    padding: 1em 0.5em;
-    font-size: 1em;
-  }
-  #alertBox {
-    font-size: 1em;
-    padding: 0.5em;
-    margin: 1em 0.2em;
-  }
-  .news-card {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5em;
-  }
-  .news-card img {
-    width: 100%;
-    max-width: 120px;
-    height: auto;
-  }
-}
-
-/* Make input rows flexible by default */
-.input-row,
-.unit-row {
-  display: flex;
-  gap: 1em;
-  flex-wrap: wrap;
-  align-items: center;
 }
