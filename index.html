@@ -13,19 +13,23 @@
   </header>
 
   <!-- Left Sidebar -->
-  <div class="sidebar">
-    <!-- Weather Fact Rotator -->
-    <div>
+  <div class="sidebar" id="leftSidebar">
+    <div class="sidebar-categories">
+      <button class="sidebar-cat-btn active" data-cat="fact">🌤️ Fact</button>
+      <button class="sidebar-cat-btn" data-cat="time">🕒 Time</button>
+      <button class="sidebar-cat-btn" data-cat="theme">🎨 Theme</button>
+      <button class="sidebar-cat-btn" data-cat="recent">🕑 Recent</button>
+      <button class="sidebar-cat-btn" data-cat="links">🔗 Links</button>
+    </div>
+    <div class="sidebar-cat-content cat-fact">
       <h3>🌤️ Weather Fact</h3>
       <div class="fact" id="weatherFact">Loading fact...</div>
     </div>
-    <!-- Local Time & Date -->
-    <div>
+    <div class="sidebar-cat-content cat-time" style="display:none;">
       <h3>🕒 Local Time</h3>
       <div class="fact" id="localTime">--</div>
     </div>
-    <!-- Theme Switcher -->
-    <div>
+    <div class="sidebar-cat-content cat-theme" style="display:none;">
       <h3>🎨 Theme</h3>
       <label class="switch">
         <input type="checkbox" id="themeSlider">
@@ -33,14 +37,12 @@
       </label>
       <span id="themeLabel" style="margin-left:10px;">Light Mode</span>
     </div>
-    <!-- Recent Searches -->
-    <div>
+    <div class="sidebar-cat-content cat-recent" style="display:none;">
       <h3>🕑 Recent Searches</h3>
       <ul id="recentSearches" style="padding-left:18px;margin:0;font-size:0.98em;"></ul>
       <button id="clearRecentBtn" style="margin-top:8px;padding:4px 12px;border-radius:6px;border:none;background:#b22222;color:#fff;cursor:pointer;font-size:0.95em;">Clear Recent</button>
     </div>
-    <!-- Quick Links -->
-    <div>
+    <div class="sidebar-cat-content cat-links" style="display:none;">
       <h3>🔗 Quick Links</h3>
       <div class="links">
         <a href="https://openweathermap.org/" target="_blank">OpenWeatherMap</a>
@@ -48,12 +50,6 @@
         <a href="https://github.com/jolinnn7/Weather-Application" target="_blank">GitHub</a>
       </div>
     </div>
-  </div>
-
-  <!-- Right Sidebar -->
-  <div class="sidebar right-sidebar">
-    <h3>📰 Weather News</h3>
-    <div id="weatherNews" class="fact">Loading news...</div>
   </div>
 
   <!-- Main Content -->
@@ -125,14 +121,18 @@
     window.onload = function () {
       document.getElementById("cityInput").focus();
       fetchEarthquakeTsunamiAlert();
-      fetchWeatherNews();
       renderRecentSearches();
+      rotateFact();
+      setInterval(rotateFact, 8000);
+      setInterval(updateLocalTime, 10000);
+      updateLocalTime();
     };
 
     // --- Event Listeners ---
     document.getElementById("cityInput").addEventListener("keydown", function (event) {
       if (event.key === "Enter") showForecast();
     });
+    document.getElementById("cityInput").addEventListener("input", updateLocalTime);
 
     // --- Units ---
     function getSelectedUnits() {
@@ -421,8 +421,6 @@
       const fact = facts[Math.floor(Math.random() * facts.length)];
       document.getElementById("weatherFact").textContent = fact;
     }
-    rotateFact();
-    setInterval(rotateFact, 8000);
 
     // --- Local Time & Date ---
     async function updateLocalTime() {
@@ -450,8 +448,6 @@
         document.getElementById("localTime").textContent = "--";
       }
     }
-    setInterval(updateLocalTime, 10000);
-    document.getElementById("cityInput").addEventListener("input", updateLocalTime);
 
     // --- Sunrise & Sunset Times ---
     function updateSunTimes(sunrise, sunset) {
@@ -513,61 +509,36 @@
     };
 
     // --- Recent Searches ---
-    function addRecentSearch(city) {
-      if (!city) return;
-      let searches = JSON.parse(localStorage.getItem("recentSearches") || "[]");
-      searches = searches.filter(c => c.toLowerCase() !== city.toLowerCase());
-      searches.unshift(city);
-      if (searches.length > 5) searches = searches.slice(0, 5);
-      localStorage.setItem("recentSearches", JSON.stringify(searches));
-      renderRecentSearches();
-    }
-    function renderRecentSearches() {
-      let searches = JSON.parse(localStorage.getItem("recentSearches") || "[]");
-      const ul = document.getElementById("recentSearches");
-      ul.innerHTML = "";
-      searches.forEach(city => {
-        const li = document.createElement("li");
-        li.style.cursor = "pointer";
-        li.textContent = city;
-        li.onclick = () => {
-          document.getElementById("cityInput").value = city;
-          showForecast();
-        };
-        ul.appendChild(li);
-      });
-    }
-    document.getElementById("clearRecentBtn").onclick = function () {
-      localStorage.removeItem("recentSearches");
-      renderRecentSearches();
-    };
-
-    // --- Weather News ---
-    async function fetchWeatherNews() {
-      try {
-        const res = await fetch(`https://gnews.io/api/v4/search?q=weather&lang=en&max=5&token=${gnewsApiKey}`);
-        const data = await res.json();
-        if (data.articles && data.articles.length > 0) {
-          document.getElementById("weatherNews").innerHTML = data.articles
-            .map(article => `
-          <div class="news-card">
-            ${article.image 
-              ? `<img src="${article.image}" alt="news image">` 
-              : `<img src="https://via.placeholder.com/60x60?text=No+Image" alt="no image">`}
-            <div>
-              <a href="${article.url}" target="_blank">${article.title}</a>
-              ${article.source && article.source.name ? `<div class="source">${article.source.name}</div>` : ''}
-            </div>
-          </div>
-        `).join('');
-        } else {
-          document.getElementById("weatherNews").textContent = "No news found. Try again later.";
+        function addRecentSearch(city) {
+          if (!city) return;
+          let searches = JSON.parse(localStorage.getItem("recentSearches") || "[]");
+          searches = searches.filter(c => c.toLowerCase() !== city.toLowerCase());
+          searches.unshift(city);
+          if (searches.length > 8) searches = searches.slice(0, 8);
+          localStorage.setItem("recentSearches", JSON.stringify(searches));
+          renderRecentSearches();
         }
-      } catch (e) {
-        document.getElementById("weatherNews").textContent = "Unable to load news.";
-        console.error("Weather News fetch error:", e);
-      }
-    }
-  </script>
-</body>
-</html>
+    
+        function renderRecentSearches() {
+          const searches = JSON.parse(localStorage.getItem("recentSearches") || "[]");
+          const ul = document.getElementById("recentSearches");
+          ul.innerHTML = "";
+          searches.forEach(city => {
+            const li = document.createElement("li");
+            li.textContent = city;
+            li.style.cursor = "pointer";
+            li.onclick = () => {
+              document.getElementById("cityInput").value = city;
+              showForecast();
+            };
+            ul.appendChild(li);
+          });
+        }
+    
+        document.getElementById("clearRecentBtn").onclick = function () {
+          localStorage.removeItem("recentSearches");
+          renderRecentSearches();
+        };
+      </script>
+    </body>
+    </html>
